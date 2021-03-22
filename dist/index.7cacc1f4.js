@@ -447,7 +447,7 @@ const user = new _ModelsUser.User({
   name: 'new record',
   age: 0
 });
-user.save();
+console.log(user.get('name'));
 
 },{"./Models/User":"5somC"}],"5somC":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -457,13 +457,26 @@ _parcelHelpers.export(exports, "User", function () {
 });
 var _Eventing = require('./Eventing');
 var _Sync = require('./Sync');
+var _Attributes = require('./Attributes');
 const rootUrl = 'http://localhost:3000/users';
 class User {
   events = new _Eventing.Eventing();
   sync = new _Sync.Sync(rootUrl);
+  constructor(attrs) {
+    this.attributes = new _Attributes.Attributes(attrs);
+  }
+  get on() {
+    return this.events.on;
+  }
+  get trigger() {
+    return this.events.trigger;
+  }
+  get get() {
+    return this.attributes.get;
+  }
 }
 
-},{"@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","./Eventing":"Fa6kf","./Sync":"6ggcM"}],"5gA8y":[function(require,module,exports) {
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y","./Eventing":"Fa6kf","./Sync":"6ggcM","./Attributes":"rTWPN"}],"5gA8y":[function(require,module,exports) {
 "use strict";
 
 exports.interopDefault = function (a) {
@@ -2299,6 +2312,27 @@ module.exports = function isAxiosError(payload) {
   return (typeof payload === 'object') && (payload.isAxiosError === true);
 };
 
-},{}]},["4UKJc","3rfh7"], "3rfh7", "parcelRequire427e")
+},{}],"rTWPN":[function(require,module,exports) {
+var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
+_parcelHelpers.defineInteropFlag(exports);
+_parcelHelpers.export(exports, "Attributes", function () {
+  return Attributes;
+});
+class Attributes {
+  constructor(data) {
+    this.data = data;
+  }
+  /*limiting the different types K can be (name, age or id) bc in TS you can treat strings as types, because of how object keys are string*/
+  /*made it to an arrow function, because it will be correctly bound to the instance of attributes, i.e this = attriabutes*/
+  get = key => {
+    return this.data[key];
+  };
+  set(update) {
+    // copy paste everything from 'update' onto 'this.data' (Object.assign)
+    Object.assign(this.data, update);
+  }
+}
+
+},{"@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y"}]},["4UKJc","3rfh7"], "3rfh7", "parcelRequire427e")
 
 //# sourceMappingURL=index.7cacc1f4.js.map

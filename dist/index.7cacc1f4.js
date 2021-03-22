@@ -448,6 +448,12 @@ const user = new _ModelsUser.User({
   age: 0
 });
 console.log(user.get('name'));
+user.on('change', () => {
+  console.log('user changed');
+});
+user.set({
+  name: 'new name'
+});
 
 },{"./Models/User":"5somC"}],"5somC":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -473,6 +479,10 @@ class User {
   }
   get get() {
     return this.attributes.get;
+  }
+  set(update) {
+    this.attributes.set(update);
+    this.events.trigger('change');
   }
 }
 
@@ -526,12 +536,12 @@ _parcelHelpers.export(exports, "Eventing", function () {
 });
 class Eventing {
   events = {};
-  on(eventName, callback) {
+  on = (eventName, callback) => {
     const handlers = this.events[eventName] || [];
     handlers.push(callback);
     this.events[eventName] = handlers;
-  }
-  trigger(eventName) {
+  };
+  trigger = eventName => {
     const handlers = this.events[eventName];
     if (!handlers || handlers.length === 0) {
       return;
@@ -539,7 +549,7 @@ class Eventing {
     handlers.forEach(callback => {
       callback();
     });
-  }
+  };
 }
 
 },{"@parcel/transformer-js/lib/esmodule-helpers.js":"5gA8y"}],"6ggcM":[function(require,module,exports) {

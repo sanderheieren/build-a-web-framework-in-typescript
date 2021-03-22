@@ -444,16 +444,13 @@ id) /*: string*/
 },{}],"3rfh7":[function(require,module,exports) {
 var _ModelsUser = require('./Models/User');
 const user = new _ModelsUser.User({
-  name: 'new record',
+  name: 'newer name',
   age: 0
 });
-console.log(user.get('name'));
-user.on('change', () => {
-  console.log('user changed');
+user.on('save', () => {
+  console.log(user);
 });
-user.set({
-  name: 'new name'
-});
+user.save();
 
 },{"./Models/User":"5somC"}],"5somC":[function(require,module,exports) {
 var _parcelHelpers = require("@parcel/transformer-js/lib/esmodule-helpers.js");
@@ -464,7 +461,7 @@ _parcelHelpers.export(exports, "User", function () {
 var _Eventing = require('./Eventing');
 var _Sync = require('./Sync');
 var _Attributes = require('./Attributes');
-const rootUrl = 'http://localhost:3000/users';
+const rootUrl = 'http://localhost:1234/users';
 class User {
   events = new _Eventing.Eventing();
   sync = new _Sync.Sync(rootUrl);
@@ -483,6 +480,22 @@ class User {
   set(update) {
     this.attributes.set(update);
     this.events.trigger('change');
+  }
+  fetch() {
+    const id = this.get('id');
+    if (typeof id !== 'number') {
+      throw new Error('Cannot fetch without an id');
+    }
+    this.sync.fetch(id).then(response => {
+      this.set(response.data);
+    });
+  }
+  save() {
+    this.sync.save(this.attributes.getAll()).then(response => {
+      this.trigger('save');
+    }).catch(() => {
+      this.trigger('error');
+    });
   }
 }
 
@@ -2340,6 +2353,9 @@ class Attributes {
   set(update) {
     // copy paste everything from 'update' onto 'this.data' (Object.assign)
     Object.assign(this.data, update);
+  }
+  getAll() {
+    return this.data;
   }
 }
 

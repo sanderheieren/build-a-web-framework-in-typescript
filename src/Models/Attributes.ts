@@ -13,6 +13,10 @@ export class Attributes<T> {
 		// copy paste everything from 'update' onto 'this.data' (Object.assign)
 		Object.assign(this.data, update);
 	}
+
+	getAll(): T {
+		return this.data;
+	}
 }
 
 // const attrs = new Attributes<UserProps>({
